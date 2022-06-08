@@ -12,12 +12,13 @@ import {
     MenuItem
 } from "@mui/material";
 import Label from "../../components/Label";
-
+import { AlertSnackbar } from '../../components/Snackbar'
+import Loader from '../../components/Loader'
+import { gender } from "../../constants";
 
 export default function EmployeeForm() {
     const navigate = useNavigate();
     const id = useParams();
-    const gender = ["Male", "Female", "Other"]
     const [isEdit, setEdit] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [snackbarInfo, setSnackbarInfo] = useState({
@@ -28,10 +29,10 @@ export default function EmployeeForm() {
 
     const EmployeeSchema = Validation.object().shape({
         name: Validation.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Name is required'),
-        department: Validation.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Department is required'),
+        department: Validation.string().min(2, 'Too Short!').max(10, 'Too Long!').required('Department is required'),
         email: Validation.string().email('Email must be a valid email address').required('Email is required'),
         age: Validation.number().required('Age is required').min(10, 'Too Short').max(140, 'Too Long!'),
-        gender: Validation.string().required('State is required'),
+        gender: Validation.string().required('Gender is required'),
         dateOfBirth: Validation.date().max(new Date()).required("DOB is required")
     });
     const formik = useFormik({
@@ -39,8 +40,8 @@ export default function EmployeeForm() {
             email: '',
             name: '',
             age: '',
-            pinCode: '',
-            state: '',
+            department: '',
+            gender: '',
             dateOfBirth: '',
         },
         validationSchema: EmployeeSchema,
@@ -71,8 +72,8 @@ export default function EmployeeForm() {
 
     return (
         <>
-            <Grid container sx={{ justifyContent: "center" }} mt="50px">
-                <Grid item xs="10" spacing={3} >
+            <Grid container sx={{ justifyContent: "center" }} mt="50px" spacing={3}>
+                <Grid item xs="10"  >
                     <FormikProvider value={formik}>
                         <Form autoComplete="off" noValidate onSubmit={handleSubmit} >
                             <Grid container spacing={2} display="flex" justifyContent="center">
@@ -101,6 +102,25 @@ export default function EmployeeForm() {
                                     />
                                 </Grid>
                                 <Grid style={{ padding: "0 10px" }} xs={12} sm={12} lg={6} xl={6} item >
+                                    <Label value={'Gender'} />
+                                    <FormControl fullWidth>
+                                        <TextField
+                                            select
+                                            placeholder="Select the Gender"
+                                            label="Gender"
+                                            {...getFieldProps('gender')}
+                                            error={Boolean(touched.gender && errors.gender)}
+                                            helperText={touched.gender && errors.gender}
+                                        >
+                                            {gender && gender.map((value) => {
+                                                return (
+                                                    <MenuItem key={value} value={value}>{value}</MenuItem>
+                                                )
+                                            })}
+                                        </TextField>
+                                    </FormControl>
+                                </Grid>
+                                <Grid style={{ padding: "0 10px" }} xs={12} sm={12} lg={6} xl={6} item >
                                     <Label value={'Date Of Birth'} />
                                     <TextField
                                         fullWidth
@@ -127,7 +147,7 @@ export default function EmployeeForm() {
                                     <Label value={'Department'} />
                                     <TextField
                                         fullWidth
-                                        type="number"
+                                        type="text"
                                         placeholder="Enter the Department name"
                                         {...getFieldProps('department')}
                                         error={Boolean(touched.department && errors.department)}
@@ -141,7 +161,7 @@ export default function EmployeeForm() {
                                     color="primary"
                                     type="button"
                                     className="form-button"
-                                    onClick={() => navigate("/candidate/list")}
+                                    onClick={() => navigate("/home")}
                                 >
                                     Back
                                 </Button>
@@ -158,6 +178,13 @@ export default function EmployeeForm() {
                     </FormikProvider>
                 </Grid>
             </Grid>
+            <AlertSnackbar
+                open={snackbarOpen}
+                message={snackbarInfo.message}
+                variant={snackbarInfo.variant}
+                handleClose={() => setSnackbarOpen(false)}
+            />
+            <Loader open={isLoading} />
         </>
     )
 }
