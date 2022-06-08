@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useNavigate, useParams } from "react-router-dom";
 import * as Validation from 'yup';
@@ -11,21 +11,26 @@ import {
     FormControl,
     MenuItem
 } from "@mui/material";
+
+//Components
 import Label from "../../components/Label";
 import { AlertSnackbar } from '../../components/Snackbar'
-import Loader from '../../components/Loader'
+import Loader from '../../components/Loader';
+
+//Constants
 import { gender } from "../../constants";
+import { createEmployee, editEmployeeData, getEmployeeById } from "../../services/employeeService";
 
 export default function EmployeeForm() {
     const navigate = useNavigate();
     const id = useParams();
-    const [isEdit, setEdit] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [isEdit, setIsEdit] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [snackbarInfo, setSnackbarInfo] = useState({
         message: "",
         variant: ""
     })
-    const [isLoading, setIsLoading] = useState(false)
 
     const EmployeeSchema = Validation.object().shape({
         name: Validation.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Name is required'),
@@ -47,28 +52,55 @@ export default function EmployeeForm() {
         validationSchema: EmployeeSchema,
         onSubmit: async (data) => {
             setIsLoading(true)
-            // const response = isEdit ? await editCandidateData(id?.id, data) : await createCandidate(data)
-            // if (response.success) {
-            //     setSnackbarInfo({
-            //         message: `Candidate ${isEdit ? 'updated' : 'added'} successfully`,
-            //         variant: "success",
-            //     });
-            //     setSnackbarOpen(true);
-            //     setTimeout(() => {
-            //         setIsLoading(false)
-            //         navigate('/candidate/list', { replace: true });
-            //     }, 2000);
-            // } else {
-            //     setSnackbarInfo({
-            //         message: `Candidate cannot be ${isEdit ? 'updated' : 'added'}`,
-            //         variant: "error",
-            //     });
-            //     setSnackbarOpen(true);
-            //     setIsLoading(false)
-            // }
+            const response = isEdit ? await editEmployeeData(id?.id, data) : await createEmployee(data)
+            if (response.success) {
+                setSnackbarInfo({
+                    message: `Candidate ${isEdit ? 'updated' : 'added'} successfully`,
+                    variant: "success",
+                });
+                setSnackbarOpen(true);
+                setTimeout(() => {
+                    setIsLoading(false)
+                    navigate('/home', { replace: true });
+                }, 2000);
+            } else {
+                setSnackbarInfo({
+                    message: `Candidate cannot be ${isEdit ? 'updated' : 'added'}`,
+                    variant: "error",
+                });
+                setSnackbarOpen(true);
+                setIsLoading(false)
+            }
         }
     });
     const { errors, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
+    const getEmployeeData = async () => {
+        const response = await getEmployeeById(id?.id)
+        setIsLoading(true)
+        if (response?.success) {
+            const { name, age, dateOfBirth, email, department, gender } = response.data
+            setFieldValue('name', name)
+            setFieldValue('age', age)
+            setFieldValue('dateOfBirth', dateOfBirth)
+            setFieldValue('email', email)
+            setFieldValue('department', department)
+            setFieldValue('gender', gender)
+        } else {
+            setSnackbarOpen(true)
+            setSnackbarInfo({
+                message: `Bike data cannot be fetched`,
+                variant: "error",
+            });
+        }
+        setIsLoading(false)
+    }
+    useEffect(() => {
+        if (id?.id) {
+            setIsEdit(true)
+            getEmployeeData()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id?.id])
 
     return (
         <>

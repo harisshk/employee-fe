@@ -10,11 +10,11 @@ import Paper from "@mui/material/Paper";
 import { Button } from "@mui/material";
 
 
-const UserListTable = ({ users, editUserHandler, deleteUserHandler }) => {
-    
+const UserListTable = ({ users, editHandler, deleteHandler }) => {
+
     return (
         <TableContainer component={Paper}>
-            <Table  aria-label="user data table">
+            <Table aria-label="user data table">
                 <TableHead>
                     <TableRow>
                         <TableCell className="userListTableHeading">Id</TableCell>
@@ -22,16 +22,16 @@ const UserListTable = ({ users, editUserHandler, deleteUserHandler }) => {
                         <TableCell className="userListTableHeading" align="left">Email</TableCell>
                         <TableCell className="userListTableHeading" align="left">Gender</TableCell>
                         <TableCell className="userListTableHeading" align="left">Date of Birth</TableCell>
-                        <TableCell className="userListTableHeading" align="left">City</TableCell>
+                        <TableCell className="userListTableHeading" align="left">Age</TableCell>
+                        <TableCell className="userListTableHeading" align="left">Department</TableCell>
                         <TableCell className="userListTableHeading" align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
 
                 <TableBody>
-                    {users.map((row) => (
+                    {users.map((row, index) => (
                         <TableRow
-                            key={row.id}
-
+                            key={row._id}
                             sx={{
                                 "&:last-child td, &:last-child th": { border: 0 },
                                 "&:nth-of-type(odd)": {
@@ -40,7 +40,7 @@ const UserListTable = ({ users, editUserHandler, deleteUserHandler }) => {
                             }}
                         >
                             <TableCell className="userListTableText" component="th" scope="row">
-                                {row.id}
+                                {index + 1}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
                                 {row.name}
@@ -52,10 +52,13 @@ const UserListTable = ({ users, editUserHandler, deleteUserHandler }) => {
                                 {row.gender}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.dob}
+                                {row.dateOfBirth}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.city}
+                                {row.age}
+                            </TableCell>
+                            <TableCell className="userListTableText" align="left">
+                                {row.department}
                             </TableCell>
                             <TableCell
                                 align="left"
@@ -65,10 +68,10 @@ const UserListTable = ({ users, editUserHandler, deleteUserHandler }) => {
                                     justifyContent: "space-evenly"
                                 }}
                             >
-                                <Button onClick={() => editUserHandler(row.id)} variant="outlined" style={{ fontSize: 12 }} color="primary">
+                                <Button onClick={() => editHandler(row._id)} variant="outlined" style={{ fontSize: 12 }} color="primary">
                                     Edit
                                 </Button>
-                                <Button onClick={() => deleteUserHandler(row.id)} variant="outlined" style={{ marginLeft: 5, fontSize: 12 }} color="error">
+                                <Button onClick={() => deleteHandler(row._id)} variant="outlined" style={{ marginLeft: 5, fontSize: 12 }} color="error">
                                     Delete
                                 </Button>
                             </TableCell>

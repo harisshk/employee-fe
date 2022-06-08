@@ -16,7 +16,8 @@ function App() {
       <Routes>
         <Route path='/home' element={<Home />} />
         <Route path='/employee/add' element={<EmployeeForm />} />
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path='/employee/edit/:id' element={<EmployeeForm />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>
   );
