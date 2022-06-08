@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import "./Home.css";
 import EmptyContent from "../../components/Table/EmptyContent";
-import { useDispatch, useSelector } from "react-redux";
+// import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserListTable from "../../components/Home/UserListTable";
-import { addNewUser, deleteUser } from "../../store/actions/user";
-import { getAllEmployees } from "../../services/employeeService";
+// import { addNewUser, deleteUser } from "../../store/actions/user";
+import { deleteEmployee, getAllEmployees } from "../../services/employeeService";
 import DeleteDialog from '../../components/Dialog/DeleteDialog'
+import Loader from "../../components/Loader";
+import { AlertSnackbar } from "../../components/Snackbar";
 
 const Home = () => {
 
     const navigate = useNavigate();
 
-    const users = useSelector(state => state?.users);
-    const dispatch = useDispatch();
+    // const users = useSelector(state => state?.users);
+    // const dispatch = useDispatch();
     const [employeesData, setEmployeesData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -47,7 +49,7 @@ const Home = () => {
     }
     const deleteHandler = async (id) => {
         setIsLoading(true)
-        const response = await deleteHandler(id)
+        const response = await deleteEmployee(id)
         const { success } = response
         if (success) {
             fetchData()
@@ -83,11 +85,11 @@ const Home = () => {
 
             <UserListTable
                 users={employeesData}
-                deleteHandler={deleteHandler}
-                editHandler={(id) => setDeleteAction({
+                deleteHandler={(id) => setDeleteAction({
                     isDeleteModalOpen: true,
                     id
                 })}
+                editHandler={editUserHandler}
             />
 
             {
@@ -104,6 +106,13 @@ const Home = () => {
                 isDeleteModalOpen: false,
                 id: ''
             })} />
+            <Loader open={isLoading} />
+            <AlertSnackbar
+                open={snackbarOpen}
+                message={snackbarInfo.message}
+                variant={snackbarInfo.variant}
+                handleClose={() => setSnackbarOpen(false)}
+            />
         </div>
     )
 }
