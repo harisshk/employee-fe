@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./Home.css";
 import EmptyContent from "../../components/Table/EmptyContent";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserListTable from "../../components/Home/UserListTable";
-// import { addNewUser, deleteUser } from "../../store/actions/user";
+import { getAllUser } from "../../store/actions/user";
 import { deleteEmployee, getAllEmployees } from "../../services/employeeService";
 import DeleteDialog from '../../components/Dialog/DeleteDialog'
 import Loader from "../../components/Loader";
@@ -15,10 +15,11 @@ const Home = () => {
 
     const navigate = useNavigate();
 
-    // const users = useSelector(state => state?.users);
-    // const dispatch = useDispatch();
+    const users = useSelector(state => state?.users);
+    console.log(users)
+    const dispatch = useDispatch();
     const [employeesData, setEmployeesData] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarInfo, setSnackbarInfo] = useState({
         message: "",
@@ -32,23 +33,9 @@ const Home = () => {
         navigate(`/employee/edit/${id}`);
     }
     const fetchData = async () => {
-        setIsLoading(true)
-        const response = await getAllEmployees()
-        const { success, data } = response
-        if (success) {
-            setEmployeesData(data)
-        }
-        else {
-            setSnackbarOpen(false)
-            setSnackbarInfo({
-                message: "Cannot fetch data",
-                variant: "error",
-            })
-        }
-        setIsLoading(false)
+        dispatch(getAllUser())
     }
     const deleteHandler = async (id) => {
-        setIsLoading(true)
         const response = await deleteEmployee(id)
         const { success } = response
         if (success) {
@@ -66,7 +53,6 @@ const Home = () => {
                 variant: "error",
             })
         }
-        setIsLoading(false)
     }
     useEffect(() => {
         fetchData()
@@ -82,19 +68,18 @@ const Home = () => {
                     Add New User
                 </Button>
             </div>
-
-            <UserListTable
-                users={employeesData}
-                deleteHandler={(id) => setDeleteAction({
-                    isDeleteModalOpen: true,
-                    id
-                })}
-                editHandler={editUserHandler}
-            />
-
             {
-                (!employeesData || employeesData.length === 0) &&
-                <EmptyContent />
+                (!users?.data || users?.data?.length === 0) ?
+                    <EmptyContent />
+                    :
+                    <UserListTable
+                        users={users?.data}
+                        deleteHandler={(id) => setDeleteAction({
+                            isDeleteModalOpen: true,
+                            id
+                        })}
+                        editHandler={editUserHandler}
+                    />
             }
             <DeleteDialog open={deleteAction?.isDeleteModalOpen} onDelete={() => {
                 deleteHandler(deleteAction?.id)
@@ -106,11 +91,11 @@ const Home = () => {
                 isDeleteModalOpen: false,
                 id: ''
             })} />
-            <Loader open={isLoading} />
+            <Loader open={users.isLoading} />
             <AlertSnackbar
-                open={snackbarOpen}
-                message={snackbarInfo.message}
-                variant={snackbarInfo.variant}
+                open={users?.error?.isError}
+                message={users?.error?.message}
+                variant={users?.error?.type}
                 handleClose={() => setSnackbarOpen(false)}
             />
         </div>

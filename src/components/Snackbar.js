@@ -13,21 +13,8 @@ export function AlertSnackbar(props) {
     return (
         <Stack spacing={2} sx={{ width: '100%' }}>
 
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }} >
-                <Alert onClose={handleClose} severity={variant} sx={{ width: '100%' }}>
-                    {message}
-                </Alert>
-            </Snackbar>
-        </Stack>
-    );
-}
-export function AlertSnackbarBC(props) {
-    const { open, message, variant, handleClose } = props
-
-    return (
-        <Stack spacing={2} sx={{ width: '100%' }}>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} >
-                <Alert onClose={handleClose} severity={variant} sx={{ width: '100%' }}>
+            <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }} >
+                <Alert onClose={handleClose} severity={variant || "success"} sx={{ width: '100%' }}>
                     {message}
                 </Alert>
             </Snackbar>
