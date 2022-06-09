@@ -31,7 +31,7 @@ const UserListTable = ({ users, editHandler, deleteHandler }) => {
                 <TableBody>
                     {users.map((row, index) => (
                         <TableRow
-                            key={row._id}
+                            key={row?._id}
                             sx={{
                                 "&:last-child td, &:last-child th": { border: 0 },
                                 "&:nth-of-type(odd)": {
@@ -43,22 +43,22 @@ const UserListTable = ({ users, editHandler, deleteHandler }) => {
                                 {index + 1}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.name}
+                                {row?.name}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.email}
+                                {row?.email}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.gender}
+                                {row?.gender}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.dateOfBirth}
+                                {row?.dateOfBirth}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.age}
+                                {row?.age}
                             </TableCell>
                             <TableCell className="userListTableText" align="left">
-                                {row.department}
+                                {row?.department}
                             </TableCell>
                             <TableCell
                                 align="left"

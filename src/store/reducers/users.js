@@ -1,7 +1,7 @@
 const initialState = {
     isLoading: false,
-    error: {
-        isError: false,
+    snackbar: {
+        isOpen: false,
         message: "",
         type: ""
     },
@@ -11,12 +11,18 @@ const initialState = {
 const users = (state = initialState, action) => {
     switch (action.type) {
         case "ADD_NEW_USER": {
-            let { user } = action.payload;
-            let newState = state;
-            newState.unshift(user);
-            return [
-                ...newState
-            ];
+            let { data } = action.payload;
+            let newState = state.data;
+            newState.unshift(data);
+            return {
+                ...state,
+                data:newState,
+                snackbar:{
+                    isOpen:true,
+                    message:"New Employee Added Successfully",
+                    type:"success"
+                }
+            };
         }
         case "EDIT_USER": {
             let { id, user } = action.payload;
@@ -55,14 +61,15 @@ const users = (state = initialState, action) => {
                 isLoading: false
             };
         }
-        case "IS_ERROR": {
+        case "SNACKBAR_OPEN": {
+            const {message, type} = action.payload
             return {
                 ...state,
                 isLoading: false,
-                error: {
-                    isError: true,
-                    type: "warning",
-                    message: "Something Went Wrong"
+                snackbar: {
+                    isOpen: true,
+                    type: type,
+                    message: message
                 }
             };
         }
@@ -70,8 +77,8 @@ const users = (state = initialState, action) => {
             return {
                 ...state,
                 isLoading: false,
-                error: {
-                    isError: false,
+                snackbar: {
+                    isOpen: false,
                     message: "",
                     type: ""
                 }

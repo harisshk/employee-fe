@@ -1,19 +1,48 @@
-import { getAllEmployees } from "../../services/employeeService";
+import { createEmployee, getAllEmployees } from "../../services/employeeService";
 
 const ADD_NEW_USER = "ADD_NEW_USER";
 const EDIT_USER = "EDIT_USER";
 const DELETE_USER = "DELETE_USER";
 const FETCH_USER = "FETCH_USER";
 const IS_LOADING = "IS_LOADING";
-const IS_LOADED = "IS_LOADED";
-const IS_ERROR = "IS_ERROR";
+const SNACKBAR_OPEN = "SNACKBAR_OPEN";
 const RESET = "RESET";
 
-export const addNewUser = (payload) => {
-    return {
-        type: ADD_NEW_USER,
-        payload
+export const addNewUser = (newData) => async (dispatch) => {
+    try {
+        dispatch({
+            type: IS_LOADING
+        })
+        const res = await createEmployee(newData);
+        const { success, data } = res
+        if (success) {
+            dispatch({
+                type: ADD_NEW_USER,
+                payload: data
+            })
+        } else {
+            alert("HI")
+            dispatch({
+                type: SNACKBAR_OPEN,
+                payload: {
+                    message: "Something went wrong",
+                    type: 'error'
+                }
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        alert("ERROR")
+
+        dispatch({
+            type: SNACKBAR_OPEN
+        })
     }
+    setTimeout(() => {
+        dispatch({
+            type: RESET
+        })
+    }, 4000);
 }
 
 
@@ -23,21 +52,29 @@ export const getAllUser = () => async (dispatch) => {
             type: IS_LOADING
         })
         const res = await getAllEmployees();
-        const {success, data} = res
-        if(success){
+        const { success, data } = res
+        if (success) {
             dispatch({
                 type: FETCH_USER,
-                payload: res.data
+                payload: data
             })
         } else {
             dispatch({
-                type: IS_ERROR
+                type: SNACKBAR_OPEN,
+                payload: {
+                    message: "Something went wrong",
+                    type: 'error'
+                }
             })
         }
-        
+
     } catch (error) {
         dispatch({
-            type: IS_ERROR
+            type: SNACKBAR_OPEN,
+            payload: {
+                message: "Something went wrong",
+                type: 'error'
+            }
         })
     }
     setTimeout(() => {
@@ -61,4 +98,11 @@ export const deleteUser = (payload) => {
         payload
     }
 }
+export const reset = (payload) => {
+    return {
+        type: RESET,
+        payload
+    }
+}
+
 

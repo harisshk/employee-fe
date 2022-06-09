@@ -16,10 +16,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     const users = useSelector(state => state?.users);
-    console.log(users)
     const dispatch = useDispatch();
-    const [employeesData, setEmployeesData] = useState([])
-
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarInfo, setSnackbarInfo] = useState({
         message: "",
@@ -93,10 +90,9 @@ const Home = () => {
             })} />
             <Loader open={users.isLoading} />
             <AlertSnackbar
-                open={users?.error?.isError}
-                message={users?.error?.message}
-                variant={users?.error?.type}
-                handleClose={() => setSnackbarOpen(false)}
+                open={users?.snackbar?.isOpen}
+                message={users?.snackbar?.message}
+                variant={users?.snackbar?.type}
             />
         </div>
     )

@@ -20,10 +20,15 @@ import Loader from '../../components/Loader';
 //Constants
 import { gender } from "../../constants";
 import { createEmployee, editEmployeeData, getEmployeeById } from "../../services/employeeService";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewUser } from "../../store/actions/user";
 
 export default function EmployeeForm() {
     const navigate = useNavigate();
     const id = useParams();
+    const dispatch = useDispatch();
+    const users = useSelector(state => state?.users);
+    console.log(users,"---")
     const [isLoading, setIsLoading] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -31,7 +36,6 @@ export default function EmployeeForm() {
         message: "",
         variant: ""
     })
-
     const EmployeeSchema = Validation.object().shape({
         name: Validation.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Name is required'),
         department: Validation.string().min(2, 'Too Short!').max(10, 'Too Long!').required('Department is required'),
@@ -51,26 +55,26 @@ export default function EmployeeForm() {
         },
         validationSchema: EmployeeSchema,
         onSubmit: async (data) => {
-            setIsLoading(true)
-            const response = isEdit ? await editEmployeeData(id?.id, data) : await createEmployee(data)
-            if (response.success) {
-                setSnackbarInfo({
-                    message: `Candidate ${isEdit ? 'updated' : 'added'} successfully`,
-                    variant: "success",
-                });
-                setSnackbarOpen(true);
-                setTimeout(() => {
-                    setIsLoading(false)
-                    navigate('/home', { replace: true });
-                }, 2000);
-            } else {
-                setSnackbarInfo({
-                    message: `Candidate cannot be ${isEdit ? 'updated' : 'added'}`,
-                    variant: "error",
-                });
-                setSnackbarOpen(true);
-                setIsLoading(false)
-            }
+            isEdit ? await editEmployeeData(id?.id, data) :  dispatch(addNewUser(data))
+            
+            // if (response.success) {
+            //     setSnackbarInfo({
+            //         message: `Candidate ${isEdit ? 'updated' : 'added'} successfully`,
+            //         variant: "success",
+            //     });
+            //     setSnackbarOpen(true);
+            //     setTimeout(() => {
+            //         setIsLoading(false)
+            //         navigate('/home', { replace: true });
+            //     }, 2000);
+            // } else {
+            //     setSnackbarInfo({
+            //         message: `Candidate cannot be ${isEdit ? 'updated' : 'added'}`,
+            //         variant: "error",
+            //     });
+            //     setSnackbarOpen(true);
+            //     setIsLoading(false)
+            // }
         }
     });
     const { errors, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
@@ -93,6 +97,11 @@ export default function EmployeeForm() {
             });
         }
         setIsLoading(false)
+    }
+    if(users?.snackbar?.type === 'success'){
+        setTimeout(() => {
+            navigate('/home', { replace: true });
+        }, 2000);
     }
     useEffect(() => {
         if (id?.id) {
@@ -211,12 +220,11 @@ export default function EmployeeForm() {
                 </Grid>
             </Grid>
             <AlertSnackbar
-                open={snackbarOpen}
-                message={snackbarInfo.message}
-                variant={snackbarInfo.variant}
-                handleClose={() => setSnackbarOpen(false)}
+                open={users?.snackbar?.isOpen}
+                message={users?.snackbar?.message}
+                variant={users?.snackbar?.type}
             />
-            <Loader open={isLoading} />
+            <Loader open={users.isLoading} />
         </>
     )
 }
