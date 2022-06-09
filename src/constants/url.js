@@ -1,6 +1,6 @@
 const prod = {
     url: {
-        //  BASE_URL: 'https://data-table-bc.herokuapp.com'
+         BASE_URL: 'https://employee-bc.herokuapp.com'
     }
 }
 const dev = {
