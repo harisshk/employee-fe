@@ -2,6 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Demo
+
+To View Demo Click [here](https://employee-fe.web.app).
 ## Available Scripts
 
 In the project directory, you can run:
