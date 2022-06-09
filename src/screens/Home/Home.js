@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./Home.css";
-import EmptyContent from "../../components/Table/EmptyContent";
+import EmptyContent from "../../components/EmptyContent/EmptyContent";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import UserListTable from "../../components/Home/UserListTable";
 import { deleteUser, getAllUser } from "../../store/actions/user";
 import DeleteDialog from '../../components/Dialog/DeleteDialog'
 import Loader from "../../components/Loader";
 import { AlertSnackbar } from "../../components/Snackbar";
+import Table from "../../components/Table";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -24,10 +24,19 @@ const Home = () => {
     }
     const fetchData = async () => {
         dispatch(getAllUser())
+
     }
     const deleteHandler = async (id) => {
         dispatch(deleteUser(id))
     }
+    const columns = [
+        {title:"Name", field:"name"},
+        {title:"Email", field:"email"},
+        {title:"Gender", field:"gender"},
+        {title:"DOB", field:"dateOfBirth"},
+        {title:"Age", field:"age"},
+        {title:"Department", field:"department"},
+    ]
     useEffect(() => {
         fetchData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,8 +55,11 @@ const Home = () => {
                 (!users?.data || users?.data?.length === 0) ?
                     <EmptyContent />
                     :
-                    <UserListTable
-                        users={users?.data}
+                    <Table
+                        sno
+                        editable deleteAction
+                        data={users?.data}
+                        columns={columns}
                         deleteHandler={(id) => setDeleteAction({
                             isDeleteModalOpen: true,
                             id

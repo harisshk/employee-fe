@@ -28,7 +28,6 @@ export default function EmployeeForm() {
     const id = useParams();
     const dispatch = useDispatch();
     const users = useSelector(state => state?.users);
-    console.log(users, "---")
     const [isEdit, setIsEdit] = useState(false)
     const EmployeeSchema = Validation.object().shape({
         name: Validation.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Name is required'),

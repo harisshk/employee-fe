@@ -8,6 +8,10 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./store";
 
+import '../node_modules/primereact/resources/themes/mdc-light-indigo/theme.css';
+import '../node_modules/primereact/resources/primereact.min.css';
+import '../node_modules/primeicons/primeicons.css'
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
