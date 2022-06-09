@@ -1,4 +1,4 @@
-import { createEmployee, getAllEmployees } from "../../services/employeeService";
+import { createEmployee, deleteEmployee, editEmployeeData, getAllEmployees } from "../../services/employeeService";
 
 const ADD_NEW_USER = "ADD_NEW_USER";
 const EDIT_USER = "EDIT_USER";
@@ -21,7 +21,6 @@ export const addNewUser = (newData) => async (dispatch) => {
                 payload: data
             })
         } else {
-            alert("HI")
             dispatch({
                 type: SNACKBAR_OPEN,
                 payload: {
@@ -32,8 +31,6 @@ export const addNewUser = (newData) => async (dispatch) => {
         }
     } catch (error) {
         console.log(error)
-        alert("ERROR")
-
         dispatch({
             type: SNACKBAR_OPEN
         })
@@ -42,7 +39,7 @@ export const addNewUser = (newData) => async (dispatch) => {
         dispatch({
             type: RESET
         })
-    }, 4000);
+    }, 2000);
 }
 
 
@@ -84,19 +81,78 @@ export const getAllUser = () => async (dispatch) => {
     }, 3000);
 }
 
-export const editUser = (payload) => {
-    return {
-        type: EDIT_USER,
-        payload
+export const editUser = (id, editData) => async (dispatch) => {
+    try {
+        dispatch({
+            type: IS_LOADING
+        })
+        const res = await editEmployeeData(id, editData);
+        const { success, data } = res
+        if (success) {
+            dispatch({
+                type: EDIT_USER,
+                payload: {
+                    id,
+                    data
+                }
+            })
+        } else {
+            dispatch({
+                type: SNACKBAR_OPEN,
+                payload: {
+                    message: "Something went wrong",
+                    type: 'error'
+                }
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        dispatch({
+            type: SNACKBAR_OPEN
+        })
     }
+    setTimeout(() => {
+        dispatch({
+            type: RESET
+        })
+    }, 2000);
 }
 
 
-export const deleteUser = (payload) => {
-    return {
-        type: DELETE_USER,
-        payload
+export const deleteUser = (id) => async (dispatch) => {
+    try {
+        dispatch({
+            type: IS_LOADING
+        })
+        const res = await deleteEmployee(id);
+        const { success, data } = res
+        if (success) {
+            dispatch({
+                type: DELETE_USER,
+                payload: {
+                    id: data?._id
+                }
+            })
+        } else {
+            dispatch({
+                type: SNACKBAR_OPEN,
+                payload: {
+                    message: "Something went wrong",
+                    type: 'error'
+                }
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        dispatch({
+            type: SNACKBAR_OPEN
+        })
     }
+    setTimeout(() => {
+        dispatch({
+            type: RESET
+        })
+    }, 2000);
 }
 export const reset = (payload) => {
     return {
@@ -104,5 +160,3 @@ export const reset = (payload) => {
         payload
     }
 }
-
-

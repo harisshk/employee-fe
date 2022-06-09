@@ -5,23 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserListTable from "../../components/Home/UserListTable";
-import { getAllUser } from "../../store/actions/user";
-import { deleteEmployee, getAllEmployees } from "../../services/employeeService";
+import { deleteUser, getAllUser } from "../../store/actions/user";
 import DeleteDialog from '../../components/Dialog/DeleteDialog'
 import Loader from "../../components/Loader";
 import { AlertSnackbar } from "../../components/Snackbar";
 
 const Home = () => {
-
     const navigate = useNavigate();
-
     const users = useSelector(state => state?.users);
     const dispatch = useDispatch();
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarInfo, setSnackbarInfo] = useState({
-        message: "",
-        variant: "",
-    });
+
     const [deleteAction, setDeleteAction] = useState({
         isDeleteModalOpen: false,
         id: ''
@@ -33,30 +26,14 @@ const Home = () => {
         dispatch(getAllUser())
     }
     const deleteHandler = async (id) => {
-        const response = await deleteEmployee(id)
-        const { success } = response
-        if (success) {
-            fetchData()
-            setSnackbarOpen(true)
-            setSnackbarInfo({
-                message: `Data deleted successfully`,
-                variant: "success",
-            })
-        }
-        else {
-            setSnackbarOpen(true)
-            setSnackbarInfo({
-                message: `Data cannot be deleted`,
-                variant: "error",
-            })
-        }
+        dispatch(deleteUser(id))
     }
     useEffect(() => {
         fetchData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return (
         <div className="homeContainer">
-
             <div className="homeHeader">
                 <div className="homeText">
                     USER LIST

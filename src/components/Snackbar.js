@@ -17,7 +17,7 @@ export function AlertSnackbar(props) {
     }
     return (
         <Stack spacing={2} sx={{ width: '100%' }}>
-            <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }} >
+            <Snackbar open={open} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }} >
                 <Alert onClose={handleClose} severity={variant || "success"} sx={{ width: '100%' }}>
                     {message}
                 </Alert>

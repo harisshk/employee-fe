@@ -16,32 +16,42 @@ const users = (state = initialState, action) => {
             newState.unshift(data);
             return {
                 ...state,
-                data:newState,
-                snackbar:{
-                    isOpen:true,
-                    message:"New Employee Added Successfully",
-                    type:"success"
+                data: newState,
+                snackbar: {
+                    isOpen: true,
+                    message: "New Employee Added Successfully",
+                    type: "success"
                 }
             };
         }
         case "EDIT_USER": {
-            let { id, user } = action.payload;
-
-            let newState = state.filter(user => user.id !== id);
-            newState.unshift(user);
-            return [
-                ...newState
-            ];
+            let { id, data } = action.payload;
+            let newState = state?.data?.filter(user => user._id !== id);
+            newState.unshift(data);
+            return {
+                ...state,
+                data: newState,
+                snackbar: {
+                    isOpen: true,
+                    message: "New Employee Updated Successfully",
+                    type: "success"
+                }
+            };
         }
         case "DELETE_USER": {
             let { id } = action.payload;
-            let newState = state.filter(user => user.id !== id);
-            return [
-                ...newState
-            ];
+            let newState = state?.data?.filter(user => user._id !== id);
+            return {
+                ...state,
+                data: newState,
+                snackbar: {
+                    isOpen: true,
+                    message: "New Employee Deleted Successfully",
+                    type: "success"
+                }
+            };
         }
         case "FETCH_USER": {
-
             return {
                 ...state,
                 data: action.payload,
@@ -55,14 +65,13 @@ const users = (state = initialState, action) => {
             };
         }
         case "IS_LOADED": {
-
             return {
                 ...state,
                 isLoading: false
             };
         }
         case "SNACKBAR_OPEN": {
-            const {message, type} = action.payload
+            const { message, type } = action.payload
             return {
                 ...state,
                 isLoading: false,
@@ -88,5 +97,4 @@ const users = (state = initialState, action) => {
             return state;
     }
 }
-
 export default users;

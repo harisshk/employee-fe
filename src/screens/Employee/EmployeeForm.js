@@ -19,23 +19,17 @@ import Loader from '../../components/Loader';
 
 //Constants
 import { gender } from "../../constants";
-import { createEmployee, editEmployeeData, getEmployeeById } from "../../services/employeeService";
+import { getEmployeeById } from "../../services/employeeService";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewUser } from "../../store/actions/user";
+import { addNewUser, editUser } from "../../store/actions/user";
 
 export default function EmployeeForm() {
     const navigate = useNavigate();
     const id = useParams();
     const dispatch = useDispatch();
     const users = useSelector(state => state?.users);
-    console.log(users,"---")
-    const [isLoading, setIsLoading] = useState(false)
+    console.log(users, "---")
     const [isEdit, setIsEdit] = useState(false)
-    const [snackbarOpen, setSnackbarOpen] = useState(false)
-    const [snackbarInfo, setSnackbarInfo] = useState({
-        message: "",
-        variant: ""
-    })
     const EmployeeSchema = Validation.object().shape({
         name: Validation.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Name is required'),
         department: Validation.string().min(2, 'Too Short!').max(10, 'Too Long!').required('Department is required'),
@@ -54,33 +48,17 @@ export default function EmployeeForm() {
             dateOfBirth: '',
         },
         validationSchema: EmployeeSchema,
-        onSubmit: async (data) => {
-            isEdit ? await editEmployeeData(id?.id, data) :  dispatch(addNewUser(data))
-            
-            // if (response.success) {
-            //     setSnackbarInfo({
-            //         message: `Candidate ${isEdit ? 'updated' : 'added'} successfully`,
-            //         variant: "success",
-            //     });
-            //     setSnackbarOpen(true);
-            //     setTimeout(() => {
-            //         setIsLoading(false)
-            //         navigate('/home', { replace: true });
-            //     }, 2000);
-            // } else {
-            //     setSnackbarInfo({
-            //         message: `Candidate cannot be ${isEdit ? 'updated' : 'added'}`,
-            //         variant: "error",
-            //     });
-            //     setSnackbarOpen(true);
-            //     setIsLoading(false)
-            // }
+        onSubmit: (data) => {
+            if (isEdit) {
+                dispatch(editUser(id?.id, data))
+            } else {
+                dispatch(addNewUser(data))
+            }
         }
     });
     const { errors, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
     const getEmployeeData = async () => {
         const response = await getEmployeeById(id?.id)
-        setIsLoading(true)
         if (response?.success) {
             const { name, age, dateOfBirth, email, department, gender } = response.data
             setFieldValue('name', name)
@@ -89,16 +67,9 @@ export default function EmployeeForm() {
             setFieldValue('email', email)
             setFieldValue('department', department)
             setFieldValue('gender', gender)
-        } else {
-            setSnackbarOpen(true)
-            setSnackbarInfo({
-                message: `Bike data cannot be fetched`,
-                variant: "error",
-            });
         }
-        setIsLoading(false)
     }
-    if(users?.snackbar?.type === 'success'){
+    if (users?.snackbar?.type === 'success') {
         setTimeout(() => {
             navigate('/home', { replace: true });
         }, 2000);
